@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
-import { initWallet1 } from './utils/initWallet';
+import { initWalletByProvider } from './utils/initWallet';
 import * as paymentContract from "../artifacts/contracts/PaymentContract.sol/PaymentContract.json";
 
 async function main() {
-    const signer = await initWallet1();
+    const signer = await initWalletByProvider(process.env.TESTNET_GOERLI_RPC_URL);
     console.log("Deploying Payment Contract");
     const pContractFactory = new ethers.ContractFactory(
         paymentContract.abi, 

@@ -1,16 +1,17 @@
 import { ethers} from "hardhat";
 import { providers } from "ethers";
+import { ConnectionInfo } from "ethers/lib/utils";
 
 const EXPOSED_KEY = "NOT_USED";
 
-async function initWallet(key : string | undefined) {
+async function initWallet(key : string | undefined, providerUrl : ConnectionInfo) {
   const wallet =
     process.env.MNEMONIC && process.env.MNEMONIC.length > 0
       ? ethers.Wallet.fromMnemonic(process.env.MNEMONIC)
       : new ethers.Wallet(key ?? EXPOSED_KEY);
 
   console.log(`Using address ${wallet.address}`);
-  const provider = setupProvider();
+  const provider = setupProvider(providerUrl);
   const signer = wallet.connect(provider);
   console.log(`Connected to the node at ${provider.connection.url}`);
   await checkNetwork(provider);
@@ -31,20 +32,11 @@ async function checkNetwork(provider: any) {
   console.log(`Connected at height: ${lastBlock.number}`);
 }
 
-function setupProvider() {
-  const rpcUrl = process.env.CUSTOM_RPC_URL;
-  const provider = new providers.JsonRpcProvider(rpcUrl);
+function setupProvider(providerUrl : ConnectionInfo) {
+  const provider = new providers.JsonRpcProvider(providerUrl);
   return provider;
 }
 
-export async function initWallet1() {
-  return initWallet(process.env.PRIVATE_KEY);
-}
-
-export async function initWallet2() {
-  return initWallet(process.env.PRIVATE_KEY_2);
-}
-
-export async function initWallet3() {
-  return initWallet(process.env.PRIVATE_KEY_3);
+export async function initWalletByProvider(providerUrl : any) {
+  return initWallet(process.env.PRIVATE_KEY, providerUrl);
 }
